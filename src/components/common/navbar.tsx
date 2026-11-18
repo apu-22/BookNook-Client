@@ -8,7 +8,7 @@ import { BookOpen, Moon, Sun, Menu, X } from "lucide-react";
 
 const navLinks = [
   { name: "Home", href: "/" },
-  { name: "All Books", href: "/books" },
+  { name: "All Books", href: "/all-books" },
   { name: "Add Book", href: "/add-book" },
   { name: "My Books", href: "/my-books" },
   { name: "My Borrows", href: "/my-borrows" },
