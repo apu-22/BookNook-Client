@@ -175,7 +175,7 @@ export default function Banner() {
                   {/* CTA Button */}
                   <div className="mt-5 sm:mt-6">
                     <Link
-                      href={slide.buttonLink}
+                      href={"/all-books"}
                       className="inline-flex items-center justify-center rounded-lg bg-[#183b2b] px-5 py-2.5 text-xs sm:text-sm font-medium text-white shadow-md hover:bg-[#122e22] active:scale-95 transition-all duration-200"
                     >
                       {slide.buttonText}

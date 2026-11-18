@@ -5,6 +5,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { BookOpen, Moon, Sun, Menu, X } from "lucide-react";
+import { signOut, useSession } from "@/lib/auth-client";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -20,6 +31,8 @@ export default function Navbar() {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
+  const { data: session } = useSession();
+  const user = session?.user;
   // Avoid hydration mismatch by waiting until mounted
   useEffect(() => {
     setMounted(true);
@@ -53,11 +66,10 @@ export default function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`text-sm font-medium transition-colors ${
-                    isActive
-                      ? "text-[#183b2b] font-semibold dark:text-emerald-400"
-                      : "text-stone-600 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100"
-                  }`}
+                  className={`text-sm font-medium transition-colors ${isActive
+                    ? "text-[#183b2b] font-semibold dark:text-emerald-400"
+                    : "text-stone-600 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100"
+                    }`}
                 >
                   {link.name}
                 </Link>
@@ -85,21 +97,57 @@ export default function Navbar() {
             )}
           </button>
 
-          {/* Login Button */}
-          <Link
-            href="/login"
-            className="inline-flex h-9 items-center justify-center rounded-lg border border-stone-300/80 bg-white/70 px-4 text-sm font-medium text-stone-800 shadow-2xs hover:bg-stone-100 hover:text-stone-950 transition-colors dark:border-stone-700 dark:bg-stone-900 dark:text-stone-200 dark:hover:bg-stone-800"
-          >
-            Login
-          </Link>
+          {
+            user ? (
+              <Popover>
+                <PopoverTrigger>
+                  <Avatar className="rounded-full">
+                    <AvatarImage src={user?.image || ""} />
+                    <AvatarFallback className="rounded-full">
+                      {user?.name?.[0]?.toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                </PopoverTrigger>
 
-          {/* Register Button */}
-          <Link
-            href="/register"
-            className="inline-flex h-9 items-center justify-center rounded-lg bg-[#183b2b] px-4 text-sm font-medium text-white shadow-xs hover:bg-[#122e22] transition-colors dark:bg-emerald-700 dark:hover:bg-emerald-600"
-          >
-            Register
-          </Link>
+                <PopoverContent className="w-56 p-3">
+                  <PopoverHeader>
+                    <PopoverTitle className="font-semibold text-neutral-900">{user?.name}</PopoverTitle>
+                    <PopoverDescription className="text-xs text-neutral-500">
+                      {user?.email}
+                    </PopoverDescription>
+                  </PopoverHeader>
+
+                  <div className="mt-3 pt-2 border-t border-neutral-100">
+                    <Button
+                      onClick={() => signOut()}
+                      variant="destructive"
+                      size="sm"
+                      className="w-full cursor-pointer"
+                    >
+                      Sign Out
+                    </Button>
+                  </div>
+                </PopoverContent>
+
+              </Popover>
+            ) :
+              <>
+                <Link
+                  href="/sign-in"
+                  className="inline-flex h-9 items-center justify-center rounded-lg border border-stone-300/80 bg-white/70 px-4 text-sm font-medium text-stone-800 shadow-2xs hover:bg-stone-100 hover:text-stone-950 transition-colors dark:border-stone-700 dark:bg-stone-900 dark:text-stone-200 dark:hover:bg-stone-800"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/sign-up"
+                  className="inline-flex h-9 items-center justify-center rounded-lg bg-[#183b2b] px-4 text-sm font-medium text-white shadow-xs hover:bg-[#122e22] transition-colors dark:bg-emerald-700 dark:hover:bg-emerald-600"
+                >
+                  Register
+                </Link>
+
+              </>
+          }
+
         </div>
 
         {/* Mobile Hamburger & Theme Toggle Button */}
@@ -140,11 +188,10 @@ export default function Navbar() {
                   key={link.name}
                   href={link.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                    isActive
-                      ? "bg-emerald-50 text-[#183b2b] font-semibold dark:bg-emerald-950/40 dark:text-emerald-400"
-                      : "text-stone-700 hover:bg-stone-100 hover:text-stone-950 dark:text-stone-300 dark:hover:bg-stone-900"
-                  }`}
+                  className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${isActive
+                    ? "bg-emerald-50 text-[#183b2b] font-semibold dark:bg-emerald-950/40 dark:text-emerald-400"
+                    : "text-stone-700 hover:bg-stone-100 hover:text-stone-950 dark:text-stone-300 dark:hover:bg-stone-900"
+                    }`}
                 >
                   {link.name}
                 </Link>
