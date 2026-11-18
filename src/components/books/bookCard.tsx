@@ -30,45 +30,45 @@ export default function BookCard({ book }: { book: Book }) {
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-stone-400 dark:text-stone-600">
-            <BookOpen className="h-10 w-10" />
-            <span className="text-[11px]">No Cover</span>
+          <div className="flex h-full w-full flex-col items-center justify-center gap-1.5 text-stone-400 dark:text-stone-600">
+            <BookOpen className="h-8 w-8" />
+            <span className="text-[10px]">No Cover</span>
           </div>
         )}
       </div>
 
       {/* Card Body */}
-      <div className="flex flex-1 flex-col p-3.5">
+      <div className="flex flex-1 flex-col p-3">
         {/* 2. Category Badge */}
-        <div className="mb-2">
-          <span className="inline-block rounded-full bg-[#183b2b]/10 px-2.5 py-0.5 text-[11px] font-medium text-[#183b2b] dark:bg-[#52b788]/15 dark:text-[#86d39e]">
+        <div className="mb-1.5">
+          <span className="inline-block rounded-full bg-[#183b2b]/10 px-2 py-0.5 text-[10px] font-medium text-[#183b2b] dark:bg-[#52b788]/15 dark:text-[#86d39e]">
             {book.category}
           </span>
         </div>
 
         {/* 3. Book Title */}
         <h3
-          className="font-serif text-sm sm:text-base font-bold text-stone-900 line-clamp-1 transition-colors group-hover:text-[#183b2b] dark:text-stone-100 dark:group-hover:text-[#86d39e]"
+          className="font-serif text-xs sm:text-sm font-bold text-stone-900 line-clamp-1 transition-colors group-hover:text-[#183b2b] dark:text-stone-100 dark:group-hover:text-[#86d39e]"
           title={book.title}
         >
           {book.title}
         </h3>
 
         {/* 4. Author Name */}
-        <p className="mt-0.5 text-xs text-stone-500 dark:text-stone-400 line-clamp-1">
+        <p className="mt-0.5 text-[11px] text-stone-500 dark:text-stone-400 line-clamp-1">
           by {book.author}
         </p>
 
         {/* 5. Short Description */}
-        <p className="mt-2 text-xs leading-relaxed text-stone-600 dark:text-stone-400 line-clamp-2">
+        <p className="mt-1.5 text-[11px] leading-relaxed text-stone-600 dark:text-stone-400 line-clamp-2">
           {descriptionText}
         </p>
 
         {/* 6. View Details Button */}
-        <div className="mt-auto pt-3">
+        <div className="mt-auto pt-2.5">
           <Link
             href={`/all-books/${book._id}`}
-            className="block w-full rounded-lg bg-[#183b2b] py-2 text-center text-xs font-semibold text-white shadow-xs transition-colors hover:bg-[#122e22] active:scale-[0.99] dark:bg-[#86d39e] dark:text-[#0a1e14] dark:hover:bg-[#72bf89]"
+            className="block w-full rounded-md bg-[#183b2b] py-1.5 text-center text-xs font-medium text-white shadow-xs transition-colors hover:bg-[#122e22] active:scale-[0.99] dark:bg-[#86d39e] dark:text-[#0a1e14] dark:hover:bg-[#72bf89]"
           >
             View Details
           </Link>

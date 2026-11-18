@@ -1,10 +1,12 @@
 import { Suspense } from "react";
+import { connection } from "next/server";
 import Link from "next/link";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import MyBookList, { BookItem } from "@/components/books/myBookList";
 
 async function UserBooksData() {
+  await connection();
   const session = await auth.api.getSession({
     headers: await headers(),
   });

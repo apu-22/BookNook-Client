@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { connection } from "next/server";
 import Link from "next/link";
 import { BookOpen, ArrowLeft } from "lucide-react";
 
@@ -21,6 +22,7 @@ async function BookDetailsContent({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await connection();
   const { id } = await params;
   let book: Book | null = null;
 
@@ -61,27 +63,27 @@ async function BookDetailsContent({
     book.description || book.shortDescription || "No description available for this book.";
 
   return (
-    <div className="grid grid-cols-1 gap-10 md:grid-cols-12 md:gap-14 items-start">
-      {/* Left Column: Big Book Cover Image */}
-      <div className="md:col-span-5 lg:col-span-5 flex justify-center">
-        <div className="w-full max-w-sm sm:max-w-md overflow-hidden rounded-2xl border border-stone-200 bg-stone-100 shadow-xl dark:border-stone-800 dark:bg-[#12281d]">
+    <div className="grid grid-cols-1 gap-8 md:grid-cols-12 md:gap-12 items-start">
+      {/* Left Column: Compact Book Cover Image */}
+      <div className="md:col-span-4 lg:col-span-4 flex justify-center md:justify-start">
+        <div className="w-full max-w-[240px] sm:max-w-[270px] overflow-hidden rounded-xl border border-stone-200/90 bg-stone-100 shadow-md dark:border-stone-800 dark:bg-[#12281d]">
           {book.image ? (
             <img
               src={book.image}
               alt={book.title}
-              className="h-full w-full object-cover aspect-[2/3] sm:aspect-[3/4]"
+              className="h-full w-full object-cover aspect-[2/3]"
             />
           ) : (
-            <div className="flex aspect-[3/4] w-full flex-col items-center justify-center gap-2 text-stone-400 dark:text-stone-600">
-              <BookOpen className="h-16 w-16" />
-              <span className="text-sm font-medium">No Cover Available</span>
+            <div className="flex aspect-[2/3] w-full flex-col items-center justify-center gap-2 text-stone-400 dark:text-stone-600">
+              <BookOpen className="h-12 w-12" />
+              <span className="text-xs font-medium">No Cover Available</span>
             </div>
           )}
         </div>
       </div>
 
       {/* Right Column: Book Details */}
-      <div className="md:col-span-7 lg:col-span-7 flex flex-col items-start text-left">
+      <div className="md:col-span-8 lg:col-span-8 flex flex-col items-start text-left">
         {/* Category Badge */}
         <div>
           <span className="inline-block rounded-full bg-stone-200/90 px-3 py-1 text-xs font-semibold text-stone-800 dark:bg-[#1e3d2c]/80 dark:text-[#86d39e] border border-stone-300/60 dark:border-[#2d5c43]/40">
@@ -151,19 +153,19 @@ async function BookDetailsContent({
 
 function BookDetailsSkeleton() {
   return (
-    <div className="grid grid-cols-1 gap-10 md:grid-cols-12 md:gap-14 animate-pulse items-start">
-      <div className="md:col-span-5 flex justify-center">
-        <div className="w-full max-w-sm sm:max-w-md aspect-[3/4] rounded-2xl bg-stone-200 dark:bg-stone-800" />
+    <div className="grid grid-cols-1 gap-8 md:grid-cols-12 md:gap-12 animate-pulse items-start">
+      <div className="md:col-span-4 flex justify-center md:justify-start">
+        <div className="w-full max-w-[240px] sm:max-w-[270px] aspect-[2/3] rounded-xl bg-stone-200 dark:bg-stone-800" />
       </div>
-      <div className="md:col-span-7 flex flex-col items-start w-full">
-        <div className="h-6 w-20 rounded-full bg-stone-200 dark:bg-stone-800" />
-        <div className="mt-3 h-10 w-3/4 rounded-lg bg-stone-200 dark:bg-stone-800" />
-        <div className="mt-2 h-5 w-1/3 rounded-lg bg-stone-200 dark:bg-stone-800" />
-        <div className="mt-5 h-20 w-full max-w-xl rounded-lg bg-stone-200 dark:bg-stone-800" />
-        <div className="mt-8 h-20 w-full max-w-xl rounded-xl bg-stone-200 dark:bg-stone-800" />
-        <div className="mt-8 flex gap-4">
-          <div className="h-10 w-36 rounded-lg bg-stone-200 dark:bg-stone-800" />
-          <div className="h-10 w-28 rounded-lg bg-stone-200 dark:bg-stone-800" />
+      <div className="md:col-span-8 flex flex-col items-start w-full">
+        <div className="h-5 w-16 rounded-full bg-stone-200 dark:bg-stone-800" />
+        <div className="mt-3 h-9 w-3/4 rounded-lg bg-stone-200 dark:bg-stone-800" />
+        <div className="mt-2 h-4 w-1/3 rounded-lg bg-stone-200 dark:bg-stone-800" />
+        <div className="mt-5 h-16 w-full max-w-xl rounded-lg bg-stone-200 dark:bg-stone-800" />
+        <div className="mt-7 h-16 w-full max-w-xl rounded-xl bg-stone-200 dark:bg-stone-800" />
+        <div className="mt-7 flex gap-4">
+          <div className="h-9 w-32 rounded-lg bg-stone-200 dark:bg-stone-800" />
+          <div className="h-9 w-24 rounded-lg bg-stone-200 dark:bg-stone-800" />
         </div>
       </div>
     </div>

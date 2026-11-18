@@ -1,7 +1,9 @@
 import { Suspense } from "react";
+import { connection } from "next/server";
 import BookCard, { Book } from "@/components/books/bookCard";
 
 async function BooksList() {
+  await connection();
   try {
     const res = await fetch("http://localhost:8000/all-books", {
       cache: "no-store",
@@ -20,7 +22,7 @@ async function BooksList() {
     }
 
     return (
-      <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
         {books.map((book) => (
           <BookCard key={book._id} book={book} />
         ))}
@@ -40,17 +42,17 @@ async function BooksList() {
 
 function BooksLoadingSkeleton() {
   return (
-    <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-      {Array.from({ length: 10 }).map((_, i) => (
+    <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+      {Array.from({ length: 12 }).map((_, i) => (
         <div
           key={i}
-          className="flex flex-col overflow-hidden rounded-xl border border-stone-200 bg-white p-3.5 dark:border-stone-800 dark:bg-[#0f241a] animate-pulse"
+          className="flex flex-col overflow-hidden rounded-xl border border-stone-200 bg-white p-3 dark:border-stone-800 dark:bg-[#0f241a] animate-pulse"
         >
           <div className="aspect-[3/4] w-full rounded-lg bg-stone-200 dark:bg-stone-800" />
-          <div className="mt-3 h-4 w-16 rounded-full bg-stone-200 dark:bg-stone-800" />
-          <div className="mt-2 h-5 w-3/4 rounded-md bg-stone-200 dark:bg-stone-800" />
-          <div className="mt-1 h-3 w-1/2 rounded-md bg-stone-200 dark:bg-stone-800" />
-          <div className="mt-3 h-8 w-full rounded-md bg-stone-200 dark:bg-stone-800" />
+          <div className="mt-2.5 h-3.5 w-12 rounded-full bg-stone-200 dark:bg-stone-800" />
+          <div className="mt-2 h-4 w-3/4 rounded-md bg-stone-200 dark:bg-stone-800" />
+          <div className="mt-1 h-2.5 w-1/2 rounded-md bg-stone-200 dark:bg-stone-800" />
+          <div className="mt-2.5 h-7 w-full rounded-md bg-stone-200 dark:bg-stone-800" />
         </div>
       ))}
     </div>
