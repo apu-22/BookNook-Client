@@ -4,8 +4,9 @@ import BookCard, { Book } from "@/components/books/bookCard";
 
 async function BooksList() {
   await connection();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
   try {
-    const res = await fetch("http://localhost:8000/all-books", {
+    const res = await fetch(`${apiUrl}/all-books`, {
       cache: "no-store",
     });
     const result = await res.json();
@@ -33,7 +34,7 @@ async function BooksList() {
     return (
       <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center dark:border-red-900/40 dark:bg-red-950/20 mt-8">
         <p className="text-sm font-medium text-red-600 dark:text-red-400">
-          Failed to load books. Please ensure your backend server is running on port 8000.
+          Failed to load books. Please ensure your backend server is running.
         </p>
       </div>
     );

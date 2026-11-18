@@ -34,9 +34,10 @@ async function UserBooksData() {
 
   let books: BookItem[] = [];
 
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
   try {
     const res = await fetch(
-      `http://localhost:8000/my-books?email=${encodeURIComponent(session.user.email)}`,
+      `${apiUrl}/my-books?email=${encodeURIComponent(session.user.email)}`,
       {
         cache: "no-store",
       }

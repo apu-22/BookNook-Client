@@ -27,7 +27,8 @@ async function BookDetailsContent({
   let book: Book | null = null;
 
   try {
-    const res = await fetch(`http://localhost:8000/all-books/${id}`, {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const res = await fetch(`${apiUrl}/all-books/${id}`, {
       cache: "no-store",
     });
     if (res.ok) {

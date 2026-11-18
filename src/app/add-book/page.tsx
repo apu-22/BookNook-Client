@@ -60,7 +60,8 @@ export default function AddBook() {
         description: formData.description,
       };
 
-      const res = await fetch("http://localhost:8000/add-book", {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const res = await fetch(`${apiUrl}/add-book`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
