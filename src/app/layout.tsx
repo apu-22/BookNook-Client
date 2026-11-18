@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -35,7 +36,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar />
+          <Suspense fallback={<div className="h-16 w-full border-b border-stone-200/80 bg-[#fbfbf9]/95 dark:border-stone-800 dark:bg-stone-950/90" />}>
+            <Navbar />
+          </Suspense>
           <main className="flex-1">
             {children}
           </main>
