@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
+import { useSession } from "@/lib/auth-client";
 
 const categories = [
   "Fiction",
@@ -29,10 +30,13 @@ export default function AddBook() {
     totalCopies: 2,
     image: "",
     description: "",
-    userName: "Md Korim Islam",
-    userEmail: "korim123@gmail.com",
+    userName: "",
+    userEmail: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { data: session } = useSession();
+  const user = session?.user;
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -51,6 +55,8 @@ export default function AddBook() {
     try {
       const bookPayload = {
         ...formData,
+        userName: user?.name || formData.userName,
+        userEmail: user?.email || formData.userEmail,
         description: formData.description,
       };
 
@@ -79,7 +85,7 @@ export default function AddBook() {
           category: "Fiction",
           totalCopies: 1,
           image: "",
-          shortDescription: "",
+          description: "",
         }));
       } else {
         toast.add({
@@ -212,7 +218,7 @@ export default function AddBook() {
             </div>
           </div>
 
-          {/* Row 4: Short Description */}
+          {/* Row 4: Description */}
           <div className="space-y-1">
             <Label htmlFor="description" className="text-xs font-medium text-stone-700 dark:text-stone-300 transition-colors">
               Description
@@ -238,9 +244,10 @@ export default function AddBook() {
                 id="userName"
                 name="userName"
                 type="text"
-                value={formData.userName}
+                value={user?.name || ""}
                 onChange={handleChange}
                 readOnly
+                placeholder="User Name"
                 className="h-9 rounded-lg border-stone-200 bg-stone-100/90 px-3 text-xs sm:text-sm text-stone-600 dark:border-[#1e3d2c] dark:bg-[#12281d]/80 dark:text-stone-400 cursor-not-allowed transition-colors"
               />
             </div>
@@ -253,9 +260,10 @@ export default function AddBook() {
                 id="userEmail"
                 name="userEmail"
                 type="email"
-                value={formData.userEmail}
+                value={user?.email || ""}
                 onChange={handleChange}
                 readOnly
+                placeholder="user@example.com"
                 className="h-9 rounded-lg border-stone-200 bg-stone-100/90 px-3 text-xs sm:text-sm text-stone-600 dark:border-[#1e3d2c] dark:bg-[#12281d]/80 dark:text-stone-400 cursor-not-allowed transition-colors"
               />
             </div>
