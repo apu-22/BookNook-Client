@@ -28,7 +28,7 @@ export default function AddBook() {
     category: "Fiction",
     totalCopies: 2,
     image: "",
-    shortDescription: "",
+    description: "",
     userName: "Md Korim Islam",
     userEmail: "korim123@gmail.com",
   });
@@ -51,7 +51,7 @@ export default function AddBook() {
     try {
       const bookPayload = {
         ...formData,
-        description: formData.shortDescription,
+        description: formData.description,
       };
 
       const res = await fetch("http://localhost:8000/add-book", {
@@ -214,15 +214,15 @@ export default function AddBook() {
 
           {/* Row 4: Short Description */}
           <div className="space-y-1">
-            <Label htmlFor="shortDescription" className="text-xs font-medium text-stone-700 dark:text-stone-300 transition-colors">
-              Short Description
+            <Label htmlFor="description" className="text-xs font-medium text-stone-700 dark:text-stone-300 transition-colors">
+              Description
             </Label>
             <Textarea
-              id="shortDescription"
-              name="shortDescription"
+              id="description"
+              name="description"
               placeholder="Brief summary of the book..."
               rows={2}
-              value={formData.shortDescription}
+              value={formData.description}
               onChange={handleChange}
               className="min-h-[68px] w-full rounded-lg border-stone-300 bg-white p-2.5 text-xs sm:text-sm text-stone-900 placeholder:text-stone-400 focus-visible:border-[#183b2b] focus-visible:ring-1 focus-visible:ring-[#183b2b]/20 dark:border-[#1e3d2c] dark:bg-[#12281d] dark:text-stone-100 dark:placeholder:text-stone-500 dark:focus-visible:border-[#52b788] dark:focus-visible:ring-[#52b788]/60 resize-none transition-colors"
             />
