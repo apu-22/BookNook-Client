@@ -1,6 +1,12 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { connection } from "next/server";
 import BookCard, { Book } from "@/components/books/bookCard";
+
+export const metadata: Metadata = {
+  title: "All Books",
+  description: "Browse all available community books on BookNook",
+};
 
 async function BooksList() {
   await connection();

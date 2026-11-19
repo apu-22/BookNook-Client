@@ -1,10 +1,16 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { connection } from "next/server";
 import Link from "next/link";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import MyBookList, { BookItem } from "@/components/books/myBookList";
 import { getServerToken } from "@/lib/getServerToken";
+
+export const metadata: Metadata = {
+  title: "My Books",
+  description: "Manage your published books in the BookNook community library",
+};
 
 async function UserBooksData() {
   await connection();

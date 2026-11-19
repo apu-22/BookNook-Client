@@ -1,10 +1,16 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { connection } from "next/server";
 import Link from "next/link";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import MyBorrowList, { BorrowItem } from "@/components/borrow-books/myBorrowList";
 import { getServerToken } from "@/lib/getServerToken";
+
+export const metadata: Metadata = {
+  title: "My Borrows",
+  description: "View and manage all your borrowed books",
+};
 
 async function UserBorrowsData() {
     await connection();

@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { connection } from "next/server";
 import Link from "next/link";
 import { BookOpen, ArrowLeft } from "lucide-react";
@@ -6,6 +7,33 @@ import BorrowBookDialog from "@/components/borrow-books/borrowBookDialog";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { getServerToken } from "@/lib/getServerToken";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  try {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const res = await fetch(`${apiUrl}/all-books/${id}`, {
+      cache: "no-store",
+    });
+    const result = await res.json();
+    const book = result?.data;
+    if (book?.title) {
+      return {
+        title: book.title,
+        description: book.description || `Details for ${book.title}`,
+      };
+    }
+  } catch {
+    // fallback if fetch fails
+  }
+  return {
+    title: "Book Details",
+  };
+}
 
 interface Book {
   _id: string;
