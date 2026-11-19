@@ -4,16 +4,13 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
-import { BookOpen, Moon, Sun, Menu, X } from "lucide-react";
+import { BookOpen, Moon, Sun, Menu, X, User as UserIcon, LogOut } from "lucide-react";
 import { signOut, useSession } from "@/lib/auth-client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
   Popover,
   PopoverContent,
-  PopoverDescription,
-  PopoverHeader,
-  PopoverTitle,
   PopoverTrigger,
 } from "@/components/ui/popover";
 
@@ -28,11 +25,19 @@ const navLinks = [
 export default function Navbar() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isUserPopoverOpen, setIsUserPopoverOpen] = useState(false);
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   const { data: session } = useSession();
   const user = session?.user;
+
+  // Auto close menus on route change
+  useEffect(() => {
+    setIsUserPopoverOpen(false);
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
+
   // Avoid hydration mismatch by waiting until mounted
   useEffect(() => {
     setMounted(true);
@@ -99,32 +104,52 @@ export default function Navbar() {
 
           {
             user ? (
-              <Popover>
-                <PopoverTrigger>
-                  <Avatar className="rounded-full">
+              <Popover open={isUserPopoverOpen} onOpenChange={setIsUserPopoverOpen}>
+                <PopoverTrigger
+                  className="rounded-full cursor-pointer focus:outline-hidden transition-transform hover:scale-105 active:scale-95"
+                  aria-label="Open user menu"
+                >
+                  <Avatar className="rounded-full h-9 w-9 border border-stone-200 dark:border-stone-700">
                     <AvatarImage src={user?.image || ""} />
-                    <AvatarFallback className="rounded-full">
+                    <AvatarFallback className="rounded-full bg-[#183b2b] text-xs font-bold text-white dark:bg-[#86d39e] dark:text-[#07170f]">
                       {user?.name?.[0]?.toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                 </PopoverTrigger>
 
-                <PopoverContent className="w-56 p-3">
-                  <PopoverHeader>
-                    <PopoverTitle className="font-semibold text-neutral-900">{user?.name}</PopoverTitle>
-                    <PopoverDescription className="text-xs text-neutral-500">
+                <PopoverContent align="end" className="w-56 p-3 shadow-lg">
+                  <div className="px-1 py-1">
+                    <p className="font-semibold text-sm text-stone-900 dark:text-stone-100 truncate">
+                      {user?.name}
+                    </p>
+                    <p className="text-xs text-stone-500 dark:text-stone-400 truncate">
                       {user?.email}
-                    </PopoverDescription>
-                  </PopoverHeader>
+                    </p>
+                  </div>
 
-                  <div className="mt-3 pt-2 border-t border-neutral-100">
+                  <div className="my-2 border-t border-stone-200/80 dark:border-stone-800" />
+
+                  <Link
+                    href="/profile"
+                    onClick={() => setIsUserPopoverOpen(false)}
+                    className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-xs sm:text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-[#183b2b] dark:text-stone-300 dark:hover:bg-stone-800 dark:hover:text-[#86d39e] transition-colors"
+                  >
+                    <UserIcon className="h-4 w-4" />
+                    <span>Profile</span>
+                  </Link>
+
+                  <div className="mt-2 pt-2 border-t border-stone-200/80 dark:border-stone-800">
                     <Button
-                      onClick={() => signOut()}
+                      onClick={() => {
+                        setIsUserPopoverOpen(false);
+                        signOut();
+                      }}
                       variant="destructive"
                       size="sm"
-                      className="w-full cursor-pointer"
+                      className="w-full cursor-pointer h-8 text-xs flex items-center justify-center gap-1.5"
                     >
-                      Sign Out
+                      <LogOut className="h-3.5 w-3.5" />
+                      <span>Sign Out</span>
                     </Button>
                   </div>
                 </PopoverContent>
@@ -199,20 +224,43 @@ export default function Navbar() {
             })}
           </nav>
           <div className="mt-4 flex flex-col gap-2 pt-3 border-t border-stone-200 dark:border-stone-800">
-            <Link
-              href="/login"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="flex h-9 items-center justify-center rounded-lg border border-stone-300 bg-white text-sm font-medium text-stone-800 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-200"
-            >
-              Login
-            </Link>
-            <Link
-              href="/register"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="flex h-9 items-center justify-center rounded-lg bg-[#183b2b] text-sm font-medium text-white dark:bg-emerald-700"
-            >
-              Register
-            </Link>
+            {user ? (
+              <>
+                <Link
+                  href="/profile"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex h-9 items-center justify-center rounded-lg border border-stone-300 bg-white text-sm font-medium text-stone-800 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-200"
+                >
+                  My Profile
+                </Link>
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    signOut();
+                  }}
+                  className="flex h-9 items-center justify-center rounded-lg bg-red-600 text-sm font-medium text-white"
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/sign-in"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex h-9 items-center justify-center rounded-lg border border-stone-300 bg-white text-sm font-medium text-stone-800 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-200"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/sign-up"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex h-9 items-center justify-center rounded-lg bg-[#183b2b] text-sm font-medium text-white dark:bg-emerald-700"
+                >
+                  Register
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}
