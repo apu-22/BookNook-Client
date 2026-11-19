@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { BookOpen, Trash2 } from "lucide-react";
 import EditBookDialog from "./editBook";
+import DeleteBookInfo from "./deleteBook";
 
 export interface BookItem {
   _id: string;
@@ -118,13 +119,7 @@ export default function MyBookList({ books }: { books: BookItem[] }) {
                 <td className="py-3.5 pl-4 pr-4 sm:pr-6 text-right">
                   <div className="inline-flex items-center gap-2">
                     <EditBookDialog book={book} />
-                    <button
-                      type="button"
-                      className="inline-flex items-center gap-1 rounded-md border border-red-300/80 bg-red-50/80 px-2.5 py-1 text-xs font-medium text-red-600 shadow-2xs hover:bg-red-100 hover:text-red-700 transition-colors dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-900/60 cursor-pointer"
-                    >
-                      <Trash2 className="h-3 w-3" />
-                      <span>Delete</span>
-                    </button>
+                    <DeleteBookInfo id={book._id} title={book.title} />
                   </div>
                 </td>
               </tr>
