@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { connection } from "next/server";
 import Link from "next/link";
 import { BookOpen, ArrowLeft } from "lucide-react";
+import BorrowBookDialog from "@/components/borrow-books/borrowBookDialog";
 
 interface Book {
   _id: string;
@@ -133,13 +134,7 @@ async function BookDetailsContent({
 
         {/* Action Buttons */}
         <div className="mt-8 flex items-center gap-5">
-          <button
-            type="button"
-            className="rounded-lg bg-[#183b2b] px-6 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-xs transition-all hover:bg-[#122e22] active:scale-[0.98] dark:bg-[#86d39e] dark:text-[#0a1e14] dark:hover:bg-[#72bf89] cursor-pointer"
-          >
-            Borrow This Book
-          </button>
-
+          <BorrowBookDialog book = {book}  />
           <Link
             href="/all-books"
             className="text-xs sm:text-sm font-medium text-stone-600 hover:text-stone-950 dark:text-stone-400 dark:hover:text-stone-200 transition-colors"
