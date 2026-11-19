@@ -30,7 +30,7 @@ const slides: SlideData[] = [
     description:
       "Find a book that someone nearby already loved, and borrow it for a week.",
     buttonText: "Browse Books",
-    buttonLink: "/books",
+    buttonLink: "/all-books",
   },
   {
     id: 2,
@@ -40,7 +40,7 @@ const slides: SlideData[] = [
     description:
       "Seven days for every book. Return it with one click when you are done.",
     buttonText: "Browse Books",
-    buttonLink: "/books",
+    buttonLink: "/all-books",
   },
   {
     id: 3,
@@ -50,7 +50,7 @@ const slides: SlideData[] = [
     description:
       "Connect with fellow readers and explore thousands of books shared across your community.",
     buttonText: "Browse Books",
-    buttonLink: "/books",
+    buttonLink: "/all-books",
   },
   {
     id: 4,
@@ -60,7 +60,7 @@ const slides: SlideData[] = [
     description:
       "Add books from your shelf in seconds and give your collection a second life.",
     buttonText: "Browse Books",
-    buttonLink: "/books",
+    buttonLink: "/all-books",
   },
   {
     id: 5,
@@ -70,7 +70,7 @@ const slides: SlideData[] = [
     description:
       "Experience the joy of an endless personal library without filling up more room.",
     buttonText: "Browse Books",
-    buttonLink: "/books",
+    buttonLink: "/all-books",
   },
 ];
 
