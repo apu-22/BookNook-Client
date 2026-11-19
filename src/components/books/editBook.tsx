@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/toast";
-import { Pencil, Loader2 } from "lucide-react";
+import { Pencil, Loader2, UploadCloud, FileImage, CheckCircle2 } from "lucide-react";
 
 export interface BookItem {
   _id: string;
@@ -31,21 +31,17 @@ export interface BookItem {
 
 const categories = [
   "Fiction",
-  "Non-Fiction",
-  "Mystery & Thriller",
-  "Science Fiction",
-  "Fantasy",
-  "Biography",
+  "Science",
   "History",
-  "Philosophy",
-  "Self-Help",
-  "Children & Young Adult",
+  "Kids",
+  "Others",
 ];
 
 export default function EditBookDialog({ book }: { book: BookItem }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState<string>("");
 
   const [formData, setFormData] = useState({
     title: book?.title || "",
@@ -56,7 +52,11 @@ export default function EditBookDialog({ book }: { book: BookItem }) {
     description: book?.description || "",
   });
 
-  // Whenever the dialog opens or the book prop changes, sync the form data with current book details
+  const [newImageFile, setNewImageFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(book?.image || null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Whenever the dialog opens or the book prop changes, sync the form data
   useEffect(() => {
     if (open && book) {
       setFormData({
@@ -67,6 +67,12 @@ export default function EditBookDialog({ book }: { book: BookItem }) {
         image: book.image || "",
         description: book.description || "",
       });
+      setNewImageFile(null);
+      setPreviewUrl(book.image || null);
+      setUploadStatus("");
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     }
   }, [open, book]);
 
@@ -80,11 +86,59 @@ export default function EditBookDialog({ book }: { book: BookItem }) {
     }));
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 10 * 1024 * 1024) {
+        toast.add({
+          title: "File Too Large",
+          description: "Please choose an image file smaller than 10MB.",
+          type: "error",
+        });
+        return;
+      }
+      setNewImageFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
+  const uploadToImgbb = async (file: File): Promise<string> => {
+    const apiKey =
+      process.env.NEXT_PUBLIC_IMGBB_API_KEY ||
+      "db821ade5aae71038f53530ac3076335";
+
+    const bodyFormData = new FormData();
+    bodyFormData.append("image", file);
+
+    const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+      method: "POST",
+      body: bodyFormData,
+    });
+
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      throw new Error(data?.error?.message || "Failed to upload image to ImgBB.");
+    }
+
+    return data.data.display_url || data.data.url;
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setUploadStatus("Updating book...");
 
     try {
+      let finalImageUrl = formData.image;
+
+      // If user selected a new file from their PC, upload it to ImgBB
+      if (newImageFile) {
+        setUploadStatus("Uploading new image to ImgBB...");
+        finalImageUrl = await uploadToImgbb(newImageFile);
+      }
+
+      setUploadStatus("Saving changes...");
+
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
       const res = await fetch(`${apiUrl}/all-books/${book._id}`, {
         method: "PATCH",
@@ -93,6 +147,7 @@ export default function EditBookDialog({ book }: { book: BookItem }) {
         },
         body: JSON.stringify({
           ...formData,
+          image: finalImageUrl,
           totalCopies: Number(formData.totalCopies) || 1,
         }),
       });
@@ -114,15 +169,16 @@ export default function EditBookDialog({ book }: { book: BookItem }) {
           type: "error",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating book:", error);
       toast.add({
-        title: "Network Error",
-        description: "Failed to connect to the server. Please try again.",
+        title: "Update Error",
+        description: error?.message || "Failed to connect to the server.",
         type: "error",
       });
     } finally {
       setIsSubmitting(false);
+      setUploadStatus("");
     }
   };
 
@@ -222,20 +278,67 @@ export default function EditBookDialog({ book }: { book: BookItem }) {
             </div>
           </div>
 
-          {/* 4. Book Cover Image URL */}
+          {/* 4. Book Cover Image Upload (Device Select + ImgBB) */}
           <div className="space-y-1.5">
-            <Label htmlFor="edit-image" className="text-xs font-semibold text-stone-700 dark:text-stone-300">
-              Image URL
+            <Label className="text-xs font-semibold text-stone-700 dark:text-stone-300 flex items-center justify-between">
+              <span>Book Cover Image</span>
+              <span className="text-[11px] font-normal text-stone-500">Upload new from PC</span>
             </Label>
-            <Input
-              id="edit-image"
-              name="image"
-              type="url"
-              value={formData.image}
-              onChange={handleChange}
-              placeholder="https://images.unsplash.com/..."
-              className="h-9 rounded-lg border-stone-200 bg-stone-50/70 px-3 text-xs sm:text-sm text-stone-900 focus:border-[#183b2b] dark:border-stone-700 dark:bg-[#142e22] dark:text-stone-100"
+
+            {/* Hidden File Input */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleImageChange}
+              accept="image/png, image/jpeg, image/jpg, image/webp"
+              className="hidden"
             />
+
+            {previewUrl ? (
+              <div className="flex items-center gap-3 rounded-xl border border-stone-200/90 bg-stone-50/60 p-2.5 dark:border-stone-700 dark:bg-[#142e22]">
+                <div className="relative h-14 w-11 shrink-0 overflow-hidden rounded-md bg-stone-200 shadow-2xs dark:bg-stone-800">
+                  <img
+                    src={previewUrl}
+                    alt="Cover preview"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-stone-800 dark:text-stone-200 truncate flex items-center gap-1">
+                    <FileImage className="h-3.5 w-3.5 text-[#183b2b] dark:text-[#86d39e]" />
+                    <span>{newImageFile ? newImageFile.name : "Current Cover Photo"}</span>
+                  </p>
+                  <p className="text-[11px] text-stone-500 dark:text-stone-400">
+                    {newImageFile
+                      ? (newImageFile.size / (1024 * 1024)).toFixed(2) + " MB (Ready to upload)"
+                      : "Hosted on ImgBB / Web"}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="mt-1 text-[11px] font-semibold text-[#183b2b] hover:underline dark:text-[#86d39e] cursor-pointer"
+                  >
+                    Change photo from device
+                  </button>
+                </div>
+                {newImageFile && (
+                  <div className="text-emerald-600 dark:text-emerald-400 pr-1">
+                    <CheckCircle2 className="h-4 w-4" />
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                className="group flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-stone-300 bg-stone-50/50 p-4 text-center hover:border-[#183b2b] hover:bg-stone-50 cursor-pointer dark:border-stone-700 dark:bg-[#142e22]/50 dark:hover:border-[#52b788]"
+              >
+                <UploadCloud className="h-5 w-5 text-stone-400 group-hover:text-[#183b2b] dark:group-hover:text-[#86d39e]" />
+                <span className="mt-1 text-xs font-medium text-stone-700 dark:text-stone-300">
+                  Click to select cover from device
+                </span>
+                <span className="text-[10px] text-stone-400">PNG, JPG, WebP up to 10MB</span>
+              </div>
+            )}
           </div>
 
           {/* 5. Description */}
@@ -276,7 +379,7 @@ export default function EditBookDialog({ book }: { book: BookItem }) {
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                  Saving...
+                  {uploadStatus || "Saving..."}
                 </>
               ) : (
                 "Save changes"
