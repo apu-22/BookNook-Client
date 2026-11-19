@@ -4,6 +4,7 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import MyBorrowList, { BorrowItem } from "@/components/borrow-books/myBorrowList";
+import { getServerToken } from "@/lib/getServerToken";
 
 async function UserBorrowsData() {
     await connection();
@@ -33,13 +34,17 @@ async function UserBorrowsData() {
     }
 
     let borrows: BorrowItem[] = [];
+    const jwtToken = await getServerToken();
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
     try {
         const res = await fetch(
-            `${apiUrl}/my-borrows?email=${encodeURIComponent(session.user.email)}`,
+            `${apiUrl}/my-borrows?email=${encodeURIComponent(session?.user?.email)}`,
             {
                 cache: "no-store",
+                headers:{
+                    authorization: `Bearer ${jwtToken?.token}`,
+                }
             }
         );
 

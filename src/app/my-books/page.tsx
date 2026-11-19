@@ -4,6 +4,7 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import MyBookList, { BookItem } from "@/components/books/myBookList";
+import { getServerToken } from "@/lib/getServerToken";
 
 async function UserBooksData() {
   await connection();
@@ -33,13 +34,17 @@ async function UserBooksData() {
   }
 
   let books: BookItem[] = [];
+  const jwtToken = await getServerToken();
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
   try {
     const res = await fetch(
-      `${apiUrl}/my-books?email=${encodeURIComponent(session.user.email)}`,
+      `${apiUrl}/my-books?email=${encodeURIComponent(session?.user?.email)}`,
       {
         cache: "no-store",
+        headers:{
+          authorization: `Bearer ${jwtToken?.token}`,
+        }
       }
     );
 

@@ -17,6 +17,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { signOut, useSession } from "@/lib/auth-client";
+import { getClientToken } from "@/lib/getClientToken";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -33,28 +34,40 @@ export default function ProfilePage() {
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
-    Promise.all([
-      fetch(`${apiUrl}/my-books?email=${encodeURIComponent(user.email)}`).then(
-        (res) => (res.ok ? res.json() : [])
-      ),
-      fetch(`${apiUrl}/my-borrows?email=${encodeURIComponent(user.email)}`).then(
-        (res) => (res.ok ? res.json() : [])
-      ),
-    ])
-      .then(([books, borrows]) => {
+    const fetchStats = async () => {
+      try {
+        const tokenData = await getClientToken();
+        const headers: Record<string, string> = {};
+        if (tokenData?.token) {
+          headers["authorization"] = `Bearer ${tokenData.token}`;
+        }
+
+        const [booksRes, borrowsRes] = await Promise.all([
+          fetch(`${apiUrl}/my-books?email=${encodeURIComponent(user.email)}`, {
+            headers,
+          }),
+          fetch(`${apiUrl}/my-borrows?email=${encodeURIComponent(user.email)}`, {
+            headers,
+          }),
+        ]);
+
+        const books = booksRes.ok ? await booksRes.json() : [];
+        const borrows = borrowsRes.ok ? await borrowsRes.json() : [];
+
         const booksList = Array.isArray(books) ? books : [];
         const borrowList = Array.isArray(borrows) ? borrows : [];
 
         setAddedBooksCount(booksList.length);
         setBorrowedBooksCount(borrowList.length);
         setPendingReturnCount(borrowList.length);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error fetching user stats:", error);
-      })
-      .finally(() => {
+      } finally {
         setLoadingStats(false);
-      });
+      }
+    };
+
+    fetchStats();
   }, [user?.email]);
 
   const handleSignOut = async () => {

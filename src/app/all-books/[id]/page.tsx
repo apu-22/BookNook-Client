@@ -3,6 +3,9 @@ import { connection } from "next/server";
 import Link from "next/link";
 import { BookOpen, ArrowLeft } from "lucide-react";
 import BorrowBookDialog from "@/components/borrow-books/borrowBookDialog";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { getServerToken } from "@/lib/getServerToken";
 
 interface Book {
   _id: string;
@@ -27,10 +30,15 @@ async function BookDetailsContent({
   const { id } = await params;
   let book: Book | null = null;
 
+const jwtToken = await getServerToken();
+
   try {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
     const res = await fetch(`${apiUrl}/all-books/${id}`, {
       cache: "no-store",
+      headers: {
+        authorization: `Bearer ${jwtToken?.token}` || ""
+      }
     });
     if (res.ok) {
       book = await res.json();
@@ -134,7 +142,7 @@ async function BookDetailsContent({
 
         {/* Action Buttons */}
         <div className="mt-8 flex items-center gap-5">
-          <BorrowBookDialog book = {book}  />
+          <BorrowBookDialog book={book} />
           <Link
             href="/all-books"
             className="text-xs sm:text-sm font-medium text-stone-600 hover:text-stone-950 dark:text-stone-400 dark:hover:text-stone-200 transition-colors"

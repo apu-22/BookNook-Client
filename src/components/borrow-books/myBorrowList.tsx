@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { BookOpen, Calendar, CheckCircle2, RotateCcw, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
+import { getClientToken } from "@/lib/getClientToken";
 
 export interface BorrowItem {
   _id: string;
@@ -25,10 +26,16 @@ export default function MyBorrowList({ borrows }: { borrows: BorrowItem[] }) {
   const handleReturnBook = async (borrow: BorrowItem) => {
     setReturningId(borrow._id);
 
+    const jwtToken = await getClientToken();
+
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const token = typeof jwtToken === "object" && jwtToken !== null ? jwtToken.token : jwtToken;
       const res = await fetch(`${apiUrl}/my-borrows/${borrow._id}`, {
         method: "DELETE",
+        headers:{
+          authorization: `Bearer ${token}`,
+        }
       });
 
       const data = await res.json().catch(() => null);

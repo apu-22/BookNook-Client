@@ -16,6 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
 import { Trash2, Loader2 } from "lucide-react";
+import { getClientToken } from "@/lib/getClientToken";
 
 export default function DeleteBookInfo({
   id,
@@ -31,10 +32,15 @@ export default function DeleteBookInfo({
   const handleDelete = async () => {
     setIsDeleting(true);
 
+    const jwtToken = await getClientToken();
+
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
       const res = await fetch(`${apiUrl}/all-books/${id}`, {
         method: "DELETE",
+        headers: {
+          authorization: `Bearer ${jwtToken?.token}`,
+        },
       });
 
       const data = await res.json().catch(() => null);

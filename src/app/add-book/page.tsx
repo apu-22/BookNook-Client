@@ -15,6 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
 import { useSession } from "@/lib/auth-client";
+import { getClientToken } from "@/lib/getClientToken";
 
 // Assignment Required Categories
 const categories = [
@@ -106,6 +107,9 @@ export default function AddBook() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const jwtToken = await getClientToken();
+
+
     if (!imageFile) {
       toast.add({
         title: "Image Required",
@@ -145,6 +149,7 @@ export default function AddBook() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          authorization: `Bearer ${jwtToken?.token}`
         },
         body: JSON.stringify(bookPayload),
       });

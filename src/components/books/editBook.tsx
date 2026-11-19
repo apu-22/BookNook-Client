@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/toast";
 import { Pencil, Loader2, UploadCloud, FileImage, CheckCircle2 } from "lucide-react";
+import { getClientToken } from "@/lib/getClientToken";
 
 export interface BookItem {
   _id: string;
@@ -128,6 +129,8 @@ export default function EditBookDialog({ book }: { book: BookItem }) {
     setIsSubmitting(true);
     setUploadStatus("Updating book...");
 
+    const jwtToken = await getClientToken();
+
     try {
       let finalImageUrl = formData.image;
 
@@ -144,6 +147,7 @@ export default function EditBookDialog({ book }: { book: BookItem }) {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          authorization: `Bearer ${jwtToken?.token}`,
         },
         body: JSON.stringify({
           ...formData,

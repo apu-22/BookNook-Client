@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/toast";
 import { BookOpen, Calendar, Loader2, LogIn } from "lucide-react";
+import { getClientToken } from "@/lib/getClientToken";
 
 interface Book {
   _id: string;
@@ -69,12 +70,15 @@ export default function BorrowBookDialog({ book }: { book: Book }) {
 
     setIsSubmitting(true);
 
+    const jwtToken = await getClientToken();
+
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
       const res = await fetch(`${apiUrl}/borrow-book`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          authorization: `Bearer ${jwtToken?.token}`,
         },
         body: JSON.stringify({
           bookId: book._id,
