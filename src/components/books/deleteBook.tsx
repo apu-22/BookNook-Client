@@ -32,9 +32,8 @@ export default function DeleteBookInfo({
   const handleDelete = async () => {
     setIsDeleting(true);
 
-    const jwtToken = await getClientToken();
-
     try {
+      const jwtToken = await getClientToken();
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
       const res = await fetch(`${apiUrl}/all-books/${id}`, {
         method: "DELETE",

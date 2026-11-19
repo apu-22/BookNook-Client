@@ -70,9 +70,8 @@ export default function BorrowBookDialog({ book }: { book: Book }) {
 
     setIsSubmitting(true);
 
-    const jwtToken = await getClientToken();
-
     try {
+      const jwtToken = await getClientToken();
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
       const res = await fetch(`${apiUrl}/borrow-book`, {
         method: "POST",

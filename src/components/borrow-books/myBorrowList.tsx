@@ -26,9 +26,8 @@ export default function MyBorrowList({ borrows }: { borrows: BorrowItem[] }) {
   const handleReturnBook = async (borrow: BorrowItem) => {
     setReturningId(borrow._id);
 
-    const jwtToken = await getClientToken();
-
     try {
+      const jwtToken = await getClientToken();
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
       const token = typeof jwtToken === "object" && jwtToken !== null ? jwtToken.token : jwtToken;
       const res = await fetch(`${apiUrl}/my-borrows/${borrow._id}`, {

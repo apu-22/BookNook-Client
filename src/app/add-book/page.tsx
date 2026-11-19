@@ -107,9 +107,6 @@ export default function AddBook() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const jwtToken = await getClientToken();
-
-
     if (!imageFile) {
       toast.add({
         title: "Image Required",
@@ -123,6 +120,7 @@ export default function AddBook() {
     setUploadStatus("Uploading image to ImgBB...");
 
     try {
+      const jwtToken = await getClientToken();
       // 1. Upload cover image to ImgBB
       const uploadedImageUrl = await uploadToImgbb(imageFile);
 

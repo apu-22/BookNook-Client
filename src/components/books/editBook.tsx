@@ -129,9 +129,8 @@ export default function EditBookDialog({ book }: { book: BookItem }) {
     setIsSubmitting(true);
     setUploadStatus("Updating book...");
 
-    const jwtToken = await getClientToken();
-
     try {
+      const jwtToken = await getClientToken();
       let finalImageUrl = formData.image;
 
       // If user selected a new file from their PC, upload it to ImgBB
