@@ -23,7 +23,7 @@ async function BooksList() {
     }
 
     return (
-      <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+      <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
         {books.map((book) => (
           <BookCard key={book._id} book={book} />
         ))}
@@ -43,17 +43,17 @@ async function BooksList() {
 
 function BooksLoadingSkeleton() {
   return (
-    <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-      {Array.from({ length: 12 }).map((_, i) => (
+    <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+      {Array.from({ length: 6 }).map((_, i) => (
         <div
           key={i}
-          className="flex flex-col overflow-hidden rounded-xl border border-stone-200 bg-white p-3 dark:border-stone-800 dark:bg-[#0f241a] animate-pulse"
+          className="flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white p-4 sm:p-5 dark:border-stone-800 dark:bg-[#0f241a] animate-pulse"
         >
-          <div className="aspect-[3/4] w-full rounded-lg bg-stone-200 dark:bg-stone-800" />
-          <div className="mt-2.5 h-3.5 w-12 rounded-full bg-stone-200 dark:bg-stone-800" />
-          <div className="mt-2 h-4 w-3/4 rounded-md bg-stone-200 dark:bg-stone-800" />
-          <div className="mt-1 h-2.5 w-1/2 rounded-md bg-stone-200 dark:bg-stone-800" />
-          <div className="mt-2.5 h-7 w-full rounded-md bg-stone-200 dark:bg-stone-800" />
+          <div className="h-52 sm:h-56 w-full rounded-xl bg-stone-200 dark:bg-stone-800" />
+          <div className="mt-3.5 h-4 w-16 rounded-full bg-stone-200 dark:bg-stone-800" />
+          <div className="mt-2.5 h-5 w-3/4 rounded-md bg-stone-200 dark:bg-stone-800" />
+          <div className="mt-1.5 h-3.5 w-1/2 rounded-md bg-stone-200 dark:bg-stone-800" />
+          <div className="mt-5 h-9 w-full rounded-lg bg-stone-200 dark:bg-stone-800" />
         </div>
       ))}
     </div>
@@ -62,7 +62,7 @@ function BooksLoadingSkeleton() {
 
 export default function AllBooks() {
   return (
-    <div className="min-h-[calc(100vh-64px)] w-full bg-[#fbfbf9] text-stone-900 transition-colors duration-300 dark:bg-[#0a1811] dark:text-stone-100 py-10 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-[calc(100vh-64px)] w-full bg-[#fbfbf9] text-stone-900 transition-colors duration-300 dark:bg-[#0a1811] dark:text-stone-100 py-8 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 border-b border-stone-200/80 pb-5 dark:border-stone-800">
