@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { BookOpen, Edit2, Trash2 } from "lucide-react";
+import { BookOpen, Trash2 } from "lucide-react";
+import EditBookDialog from "./editBook";
 
 export interface BookItem {
   _id: string;
@@ -116,13 +117,7 @@ export default function MyBookList({ books }: { books: BookItem[] }) {
                 {/* 4. Actions: Edit and Delete Buttons */}
                 <td className="py-3.5 pl-4 pr-4 sm:pr-6 text-right">
                   <div className="inline-flex items-center gap-2">
-                    <button
-                      type="button"
-                      className="inline-flex items-center gap-1 rounded-md border border-stone-300 bg-white px-2.5 py-1 text-xs font-medium text-stone-700 shadow-2xs hover:bg-stone-100 hover:text-stone-900 transition-colors dark:border-stone-700/80 dark:bg-stone-800/80 dark:text-stone-200 dark:hover:bg-stone-700/90 cursor-pointer"
-                    >
-                      <Edit2 className="h-3 w-3" />
-                      <span>Edit</span>
-                    </button>
+                    <EditBookDialog book={book} />
                     <button
                       type="button"
                       className="inline-flex items-center gap-1 rounded-md border border-red-300/80 bg-red-50/80 px-2.5 py-1 text-xs font-medium text-red-600 shadow-2xs hover:bg-red-100 hover:text-red-700 transition-colors dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-900/60 cursor-pointer"
