@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, EffectFade } from "swiper/modules";
+import { Sparkles, ArrowRight, BookPlus, CheckCircle2, BookOpen } from "lucide-react";
 
 // Swiper styles
 import "swiper/css";
@@ -14,63 +15,81 @@ import "swiper/css/effect-fade";
 interface SlideData {
   id: number;
   image: string;
-  tag: string;
+  badge: string;
   title: string;
+  highlight: string;
   description: string;
-  buttonText: string;
-  buttonLink: string;
+  primaryBtnText: string;
+  primaryBtnLink: string;
+  secondaryBtnText: string;
+  secondaryBtnLink: string;
 }
 
 const slides: SlideData[] = [
   {
     id: 1,
     image: "/images/img1.jpg",
-    tag: "BOOKNOOK",
-    title: "Your neighbourhood\nlibrary, online",
+    badge: "Community Book Exchange",
+    title: "Your neighbourhood\nlibrary,",
+    highlight: "online.",
     description:
-      "Find a book that someone nearby already loved, and borrow it for a week.",
-    buttonText: "Browse Books",
-    buttonLink: "/all-books",
+      "Find books loved by fellow readers nearby, borrow them for free, and give your own bookshelf a second life.",
+    primaryBtnText: "Explore All Books",
+    primaryBtnLink: "/all-books",
+    secondaryBtnText: "Share a Book",
+    secondaryBtnLink: "/add-book",
   },
   {
     id: 2,
     image: "/images/img2.jpg",
-    tag: "BOOKNOOK",
-    title: "Borrow, read,\nreturn. Repeat.",
+    badge: "Effortless Lending",
+    title: "Borrow, read,\nand return.",
+    highlight: "Repeat.",
     description:
-      "Seven days for every book. Return it with one click when you are done.",
-    buttonText: "Browse Books",
-    buttonLink: "/all-books",
+      "Enjoy 7 days of free reading for every title. Return with a single click whenever you finish your chapter.",
+    primaryBtnText: "Browse Books",
+    primaryBtnLink: "/all-books",
+    secondaryBtnText: "Share a Book",
+    secondaryBtnLink: "/add-book",
   },
   {
     id: 3,
     image: "/images/img3.jpg",
-    tag: "BOOKNOOK",
-    title: "Discover stories\nwaiting on local shelves",
+    badge: "Thousands of Stories",
+    title: "Discover stories\nwaiting on",
+    highlight: "local shelves.",
     description:
-      "Connect with fellow readers and explore thousands of books shared across your community.",
-    buttonText: "Browse Books",
-    buttonLink: "/all-books",
+      "Connect with passionate readers and explore books shared across your neighbourhood community.",
+    primaryBtnText: "Find Your Next Read",
+    primaryBtnLink: "/all-books",
+    secondaryBtnText: "Share a Book",
+    secondaryBtnLink: "/add-book",
   },
   {
     id: 4,
     image: "/images/img4.jpg",
-    tag: "BOOKNOOK",
-    title: "Share your favorites,\ninspire another reader",
+    badge: "Share & Inspire",
+    title: "Share your favorites,\ninspire",
+    highlight: "another reader.",
     description:
-      "Add books from your shelf in seconds and give your collection a second life.",
-    buttonText: "Browse Books",
-    buttonLink: "/all-books",
+      "Add books from your home shelf in seconds and start connecting with fellow literature lovers.",
+    primaryBtnText: "Add to Shelf",
+    primaryBtnLink: "/add-book",
+    secondaryBtnText: "Explore Books",
+    secondaryBtnLink: "/all-books",
   },
   {
     id: 5,
     image: "/images/img5.jpg",
-    tag: "BOOKNOOK",
-    title: "Read sustainably,\nread together",
+    badge: "Eco-Friendly Reading",
+    title: "Read sustainably,\ntogether with",
+    highlight: "community.",
     description:
-      "Experience the joy of an endless personal library without filling up more room.",
-    buttonText: "Browse Books",
-    buttonLink: "/all-books",
+      "Experience the joy of an endless personal library without cluttering your room or spending a dime.",
+    primaryBtnText: "Start Exploring",
+    primaryBtnLink: "/all-books",
+    secondaryBtnText: "Share a Book",
+    secondaryBtnLink: "/add-book",
   },
 ];
 
@@ -81,11 +100,17 @@ export default function Banner() {
     setMounted(true);
   }, []);
 
+  const trustHighlights = [
+    "100% Free to Borrow",
+    "7 Days per Book",
+    "Community Powered",
+  ];
+
   return (
-    <section className="relative w-full overflow-hidden">
+    <section className="relative w-full overflow-hidden bg-[#07170f]">
       {!mounted ? (
-        // SSR / Fallback Slide (Landscape 16:9 ratio with controlled height)
-        <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] min-h-[360px] max-h-[480px]">
+        // SSR / Initial Fallback view
+        <div className="relative w-full min-h-[480px] sm:min-h-[520px] lg:min-h-[560px] flex items-center">
           <div className="absolute inset-0">
             <Image
               src={slides[0].image}
@@ -95,27 +120,54 @@ export default function Banner() {
               className="object-cover object-center"
               sizes="100vw"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/65 to-black/35" />
-            <div className="absolute inset-0 bg-black/25" />
+            {/* Warm cinematic gradient overlays */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-black/30" />
+            <div className="absolute inset-0 bg-radial from-transparent via-black/20 to-black/60" />
+            <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#07170f]/80 to-transparent" />
           </div>
-          <div className="relative z-10 mx-auto flex h-full max-w-7xl flex-col justify-center px-6 sm:px-10 lg:px-16 text-left">
-            <div className="max-w-2xl py-6">
-              <span className="inline-block text-xs font-semibold tracking-[0.25em] text-[#d47a5b] uppercase mb-2">
-                {slides[0].tag}
-              </span>
-              <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.18] whitespace-pre-line">
-                {slides[0].title}
+
+          <div className="relative z-10 mx-auto w-full max-w-7xl px-6 sm:px-10 lg:px-16 py-12 sm:py-16">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-950/60 px-3.5 py-1 text-xs font-semibold text-emerald-300 backdrop-blur-md shadow-xs mb-4">
+                <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
+                <span>{slides[0].badge}</span>
+              </div>
+
+              <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.14] whitespace-pre-line drop-shadow-md">
+                {slides[0].title}{" "}
+                <span className="text-emerald-400">{slides[0].highlight}</span>
               </h1>
-              <p className="mt-3 sm:mt-4 text-xs sm:text-sm md:text-base text-stone-300 leading-relaxed max-w-xl">
+
+              <p className="mt-4 text-sm sm:text-base md:text-lg text-stone-200/90 leading-relaxed max-w-xl drop-shadow-xs">
                 {slides[0].description}
               </p>
-              <div className="mt-5 sm:mt-6">
+
+              <div className="mt-7 flex flex-wrap items-center gap-3.5 sm:gap-4">
                 <Link
-                  href={slides[0].buttonLink}
-                  className="inline-flex items-center justify-center rounded-lg bg-[#183b2b] px-5 py-2.5 text-xs sm:text-sm font-medium text-white shadow-md hover:bg-[#122e22]"
+                  href={slides[0].primaryBtnLink}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#86d39e] px-6 py-3 text-xs sm:text-sm font-bold text-[#07170f] shadow-lg shadow-black/25 hover:bg-[#72bf89] hover:scale-[1.02] active:scale-[0.98] transition-all"
                 >
-                  {slides[0].buttonText}
+                  <BookOpen className="h-4 w-4" />
+                  <span>{slides[0].primaryBtnText}</span>
+                  <ArrowRight className="h-4 w-4" />
                 </Link>
+
+                <Link
+                  href={slides[0].secondaryBtnLink}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/25 bg-white/10 px-5 py-3 text-xs sm:text-sm font-semibold text-white backdrop-blur-md hover:bg-white/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                >
+                  <BookPlus className="h-4 w-4" />
+                  <span>{slides[0].secondaryBtnText}</span>
+                </Link>
+              </div>
+
+              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 pt-4 border-t border-white/15 text-xs font-medium text-stone-300">
+                {trustHighlights.map((item) => (
+                  <div key={item} className="flex items-center gap-1.5">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                    <span>{item}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -126,7 +178,7 @@ export default function Banner() {
           effect="fade"
           speed={1000}
           autoplay={{
-            delay: 4500,
+            delay: 5000,
             disableOnInteraction: false,
           }}
           pagination={{
@@ -135,10 +187,13 @@ export default function Banner() {
             bulletClass: "banner-bullet",
           }}
           loop={true}
-          className="w-full aspect-[16/10] sm:aspect-[16/9] min-h-[360px] max-h-[480px]"
+          className="w-full min-h-[480px] sm:min-h-[520px] lg:min-h-[560px]"
         >
           {slides.map((slide, index) => (
-            <SwiperSlide key={slide.id} className="relative w-full h-full select-none">
+            <SwiperSlide
+              key={slide.id}
+              className="relative w-full h-full min-h-[480px] sm:min-h-[520px] lg:min-h-[560px] flex items-center select-none"
+            >
               {/* Background Image */}
               <div className="absolute inset-0">
                 <Image
@@ -149,37 +204,60 @@ export default function Banner() {
                   className="object-cover object-center"
                   sizes="100vw"
                 />
-                {/* Dark Gradient Overlay for Maximum Text Readability */}
-                <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/65 to-black/35" />
-                <div className="absolute inset-0 bg-black/25" />
+                {/* Cinematic Overlays */}
+                <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-black/30" />
+                <div className="absolute inset-0 bg-radial from-transparent via-black/20 to-black/60" />
+                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#07170f]/80 to-transparent" />
               </div>
 
               {/* Slide Content */}
-              <div className="relative z-10 mx-auto flex h-full max-w-7xl flex-col justify-center px-6 sm:px-10 lg:px-16 text-left">
-                <div className="max-w-2xl py-6">
-                  {/* Small Tag */}
-                  <span className="inline-block text-xs font-semibold tracking-[0.25em] text-[#d47a5b] uppercase mb-2">
-                    {slide.tag}
-                  </span>
+              <div className="relative z-10 mx-auto w-full max-w-7xl px-6 sm:px-10 lg:px-16 py-12 sm:py-16">
+                <div className="max-w-2xl">
+                  {/* Frosted Badge */}
+                  <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-950/60 px-3.5 py-1 text-xs font-semibold text-emerald-300 backdrop-blur-md shadow-xs mb-4">
+                    <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
+                    <span>{slide.badge}</span>
+                  </div>
 
-                  {/* Main Heading */}
-                  <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-[1.18] whitespace-pre-line drop-shadow-sm">
-                    {slide.title}
+                  {/* Main Editorial Heading */}
+                  <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.14] whitespace-pre-line drop-shadow-md">
+                    {slide.title}{" "}
+                    <span className="text-emerald-400">{slide.highlight}</span>
                   </h1>
 
-                  {/* Subtitle / Description */}
-                  <p className="mt-3 sm:mt-4 text-xs sm:text-sm md:text-base text-stone-300 leading-relaxed max-w-xl">
+                  {/* Description */}
+                  <p className="mt-4 text-sm sm:text-base md:text-lg text-stone-200/90 leading-relaxed max-w-xl drop-shadow-xs">
                     {slide.description}
                   </p>
 
-                  {/* CTA Button */}
-                  <div className="mt-5 sm:mt-6">
+                  {/* Action Buttons */}
+                  <div className="mt-7 flex flex-wrap items-center gap-3.5 sm:gap-4">
                     <Link
-                      href={"/all-books"}
-                      className="inline-flex items-center justify-center rounded-lg bg-[#183b2b] px-5 py-2.5 text-xs sm:text-sm font-medium text-white shadow-md hover:bg-[#122e22] active:scale-95 transition-all duration-200"
+                      href={slide.primaryBtnLink}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#86d39e] px-6 py-3 text-xs sm:text-sm font-bold text-[#07170f] shadow-lg shadow-black/25 hover:bg-[#72bf89] hover:scale-[1.02] active:scale-[0.98] transition-all"
                     >
-                      {slide.buttonText}
+                      <BookOpen className="h-4 w-4" />
+                      <span>{slide.primaryBtnText}</span>
+                      <ArrowRight className="h-4 w-4" />
                     </Link>
+
+                    <Link
+                      href={slide.secondaryBtnLink}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/25 bg-white/10 px-5 py-3 text-xs sm:text-sm font-semibold text-white backdrop-blur-md hover:bg-white/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                    >
+                      <BookPlus className="h-4 w-4" />
+                      <span>{slide.secondaryBtnText}</span>
+                    </Link>
+                  </div>
+
+                  {/* Trust Highlights */}
+                  <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 pt-4 border-t border-white/15 text-xs font-medium text-stone-300">
+                    {trustHighlights.map((item) => (
+                      <div key={item} className="flex items-center gap-1.5">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                        <span>{item}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -195,19 +273,19 @@ export default function Banner() {
           width: 8px;
           height: 8px;
           border-radius: 9999px;
-          background-color: rgba(255, 255, 255, 0.5);
+          background-color: rgba(255, 255, 255, 0.4);
           margin: 0 4px;
           cursor: pointer;
           transition: all 0.3s ease;
         }
         .banner-bullet-active {
-          background-color: #d47a5b !important;
-          width: 20px;
+          background-color: #86d39e !important;
+          width: 24px;
           border-radius: 9999px;
           opacity: 1;
         }
         .swiper-pagination {
-          bottom: 16px !important;
+          bottom: 24px !important;
         }
       `}</style>
     </section>
