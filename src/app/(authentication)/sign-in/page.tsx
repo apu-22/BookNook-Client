@@ -1,39 +1,43 @@
-
 'use client';
 
-import { Button } from "@/components/ui/button"
+import { Suspense, useState } from "react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Loader2 } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
     Field,
     FieldDescription,
     FieldGroup,
     FieldLabel,
     FieldSeparator,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
 import { signIn } from "@/lib/auth-client";
-import { Loader2 } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react"
 
-export default function SignInPage() {
+function SignInForm() {
     const [loading, setLoading] = useState(false);
     const [googleLoading, setGoogleLoading] = useState(false);
     const router = useRouter();
+    const searchParams = useSearchParams();
+
+    // Destination after successful sign-in
+    const redirectParam = searchParams.get("redirect");
+    const redirectTo = redirectParam && redirectParam.startsWith("/") ? redirectParam : "/";
 
     const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const formData = new FormData(e.currentTarget);
-
         const data = Object.fromEntries(
             formData.entries()
         ) as { email: string; password: string };
@@ -56,10 +60,10 @@ export default function SignInPage() {
             if (userData) {
                 toast.add({
                     title: "Welcome Back!",
-                    description: "You have signed in successfully.",
+                    description: `${userData.user?.name || ""}, you have signed in successfully.`,
                     type: "success",
                 });
-                router.push("/");
+                router.push(redirectTo);
                 router.refresh();
             }
 
@@ -73,7 +77,7 @@ export default function SignInPage() {
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     const handleGoogleSignIn = async () => {
         try {
@@ -81,7 +85,7 @@ export default function SignInPage() {
             sessionStorage.setItem("show_welcome_toast", "true");
             const res = await signIn.social({
                 provider: "google",
-                callbackURL: "/",
+                callbackURL: redirectTo,
             });
 
             if (res?.error) {
@@ -108,7 +112,6 @@ export default function SignInPage() {
 
     return (
         <div className="flex min-h-[calc(100vh-14rem)] w-full items-center justify-center px-4 py-12">
-
             <div className="flex w-full max-w-md flex-col gap-6">
                 <Card>
                     <CardHeader className="text-center">
@@ -167,14 +170,13 @@ export default function SignInPage() {
                                     <Input id="password" name="password" type="password" required />
                                 </Field>
                                 <Field>
-                                    {/* <Button type="submit">Login</Button> */}
                                     <Button type="submit" disabled={loading}>
                                         {loading ? "Signing in..." : "Sign In"}
                                     </Button>
                                     <FieldDescription className="text-center">
                                         Don&apos;t have an account?
                                         <Link
-                                            className="font-medium text-primary hover:underline cursor-pointer"
+                                            className="font-medium text-primary hover:underline cursor-pointer ml-1"
                                             href="/sign-up"
                                         >
                                             Sign Up
@@ -191,6 +193,19 @@ export default function SignInPage() {
                 </FieldDescription>
             </div>
         </div>
+    );
+}
 
-    )
+export default function SignInPage() {
+    return (
+        <Suspense
+            fallback={
+                <div className="flex min-h-[calc(100vh-14rem)] w-full items-center justify-center">
+                    <Loader2 className="h-6 w-6 animate-spin text-stone-400" />
+                </div>
+            }
+        >
+            <SignInForm />
+        </Suspense>
+    );
 }

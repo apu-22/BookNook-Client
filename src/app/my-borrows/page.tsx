@@ -29,7 +29,7 @@ async function UserBorrowsData() {
                 </p>
                 <div className="mt-6">
                     <Link
-                        href="/sign-in"
+                        href="/sign-in?redirect=/my-borrows"
                         className="inline-flex items-center justify-center rounded-lg bg-[#183b2b] px-5 py-2 text-xs sm:text-sm font-semibold text-white shadow-xs hover:bg-[#122e22] transition-colors dark:bg-[#86d39e] dark:text-[#0a1e14] dark:hover:bg-[#72bf89]"
                     >
                         Sign In

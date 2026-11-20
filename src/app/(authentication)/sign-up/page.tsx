@@ -138,7 +138,7 @@ export default function SignUpPage() {
                     <CardHeader className="text-center pb-2 pt-5">
                         <CardTitle className="text-lg sm:text-xl font-bold font-serif">Create an Account</CardTitle>
                         <CardDescription className="text-xs">
-                            Sign up with your Apple or Google account
+                            Sign up with your Google account
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="px-5 pb-5 pt-1">

@@ -1,11 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { BookOpen, Calendar, CheckCircle2, RotateCcw, Loader2 } from "lucide-react";
+import { BookOpen, Calendar, CheckCircle2, RotateCcw, Loader2, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useSession } from "@/lib/auth-client";
 import { getClientToken } from "@/lib/getClientToken";
 
 export interface BorrowItem {
@@ -21,15 +29,35 @@ export interface BorrowItem {
 
 export default function MyBorrowList({ borrows }: { borrows: BorrowItem[] }) {
   const router = useRouter();
+  const { data: session } = useSession();
   const [returningId, setReturningId] = useState<string | null>(null);
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
+
+  // Automatically dismiss auth dialog if user signs in
+  useEffect(() => {
+    if (session?.user) {
+      setShowAuthDialog(false);
+    }
+  }, [session?.user]);
 
   const handleReturnBook = async (borrow: BorrowItem) => {
+    // Check if user is signed in
+    if (!session?.user) {
+      setShowAuthDialog(true);
+      return;
+    }
+
     setReturningId(borrow._id);
 
     try {
       const jwtToken = await getClientToken();
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
       const token = typeof jwtToken === "object" && jwtToken !== null ? jwtToken.token : jwtToken;
+
+      if (!token) {
+        setShowAuthDialog(true);
+        return;
+      }
       const res = await fetch(`${apiUrl}/my-borrows/${borrow._id}`, {
         method: "DELETE",
         headers:{
@@ -196,6 +224,43 @@ export default function MyBorrowList({ borrows }: { borrows: BorrowItem[] }) {
           </tbody>
         </table>
       </div>
+
+      {/* Sign In Required Dialog (if user logged out while staying on this page) */}
+      <Dialog open={showAuthDialog && !session?.user} onOpenChange={setShowAuthDialog}>
+        <DialogContent className="sm:max-w-md rounded-2xl border border-stone-200 bg-white p-6 shadow-xl dark:border-stone-800 dark:bg-[#0c1f15] dark:text-stone-100">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-100/80 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400">
+            <LogIn className="h-7 w-7" />
+          </div>
+
+          <DialogHeader className="mt-3 text-center">
+            <DialogTitle className="font-serif text-xl font-bold text-stone-900 dark:text-white">
+              Sign In Required
+            </DialogTitle>
+            <DialogDescription className="mt-1 text-xs sm:text-sm text-stone-600 dark:text-stone-400">
+              Please sign in before returning this book to the library.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setShowAuthDialog(false)}
+              className="w-full sm:w-auto rounded-xl"
+            >
+              Cancel
+            </Button>
+            <Link
+              href="/sign-in?redirect=/my-borrows"
+              onClick={() => setShowAuthDialog(false)}
+              className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-[#183b2b] px-5 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-xs hover:bg-[#122e22] dark:bg-[#86d39e] dark:text-[#0a1e14] dark:hover:bg-[#72bf89]"
+            >
+              <LogIn className="h-4 w-4" />
+              <span>Sign In to Continue</span>
+            </Link>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

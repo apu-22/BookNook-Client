@@ -123,17 +123,28 @@ export default function BorrowBookDialog({ book }: { book: Book }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {/* 1. Trigger Button on Details Page */}
-      <DialogTrigger
-        render={
-          <Button
-            type="button"
-            disabled={!copiesAvailable}
-            className="rounded-lg bg-[#183b2b] px-6 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-xs transition-all hover:bg-[#122e22] active:scale-[0.98] dark:bg-[#86d39e] dark:text-[#0a1e14] dark:hover:bg-[#72bf89] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-          >
-            {copiesAvailable ? "Borrow This Book" : "Out of Stock"}
-          </Button>
-        }
-      />
+      {!user ? (
+        <Button
+          type="button"
+          disabled={!copiesAvailable}
+          onClick={() => router.push(`/sign-in?redirect=/all-books/${book._id}`)}
+          className="rounded-lg bg-[#183b2b] px-6 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-xs transition-all hover:bg-[#122e22] active:scale-[0.98] dark:bg-[#86d39e] dark:text-[#0a1e14] dark:hover:bg-[#72bf89] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+        >
+          {copiesAvailable ? "Borrow This Book" : "Out of Stock"}
+        </Button>
+      ) : (
+        <DialogTrigger
+          render={
+            <Button
+              type="button"
+              disabled={!copiesAvailable}
+              className="rounded-lg bg-[#183b2b] px-6 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-xs transition-all hover:bg-[#122e22] active:scale-[0.98] dark:bg-[#86d39e] dark:text-[#0a1e14] dark:hover:bg-[#72bf89] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            >
+              {copiesAvailable ? "Borrow This Book" : "Out of Stock"}
+            </Button>
+          }
+        />
+      )}
 
       <DialogContent className="sm:max-w-md rounded-2xl border border-stone-200 bg-white p-6 shadow-xl dark:border-stone-800 dark:bg-[#0c1f15] dark:text-stone-100">
         <DialogHeader>
@@ -187,7 +198,7 @@ export default function BorrowBookDialog({ book }: { book: Book }) {
             </p>
             <div className="mt-3">
               <Link
-                href="/sign-in"
+                href={`/sign-in?redirect=/all-books/${book._id}`}
                 className="inline-flex items-center gap-1.5 rounded-lg bg-[#183b2b] px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-[#122e22] dark:bg-[#86d39e] dark:text-[#0a1e14]"
               >
                 <LogIn className="h-3.5 w-3.5" />
