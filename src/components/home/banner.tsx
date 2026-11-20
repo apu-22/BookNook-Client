@@ -266,28 +266,7 @@ export default function Banner() {
         </Swiper>
       )}
 
-      {/* Custom Styles for Swiper Pagination Bullets */}
-      <style jsx global>{`
-        .banner-bullet {
-          display: inline-block;
-          width: 8px;
-          height: 8px;
-          border-radius: 9999px;
-          background-color: rgba(255, 255, 255, 0.4);
-          margin: 0 4px;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-        .banner-bullet-active {
-          background-color: #86d39e !important;
-          width: 24px;
-          border-radius: 9999px;
-          opacity: 1;
-        }
-        .swiper-pagination {
-          bottom: 24px !important;
-        }
-      `}</style>
+      {/* Custom Styles for Swiper Pagination Bullets moved to globals.css */}
     </section>
   );
 }

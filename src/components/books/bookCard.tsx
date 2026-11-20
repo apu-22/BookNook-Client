@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { BookOpen, ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 export interface Book {
   _id: string;
@@ -14,11 +17,27 @@ export interface Book {
   userEmail?: string;
 }
 
-export default function BookCard({ book }: { book: Book }) {
+export default function BookCard({
+  book,
+  index = 0,
+}: {
+  book: Book;
+  index?: number;
+}) {
   const isAvailable = typeof book.totalCopies === "number" ? book.totalCopies > 0 : true;
 
   return (
-    <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-stone-200/90 bg-white/95 p-3.5 sm:p-4 shadow-xs transition-all duration-300 hover:-translate-y-1.5 hover:border-[#183b2b]/35 hover:shadow-xl hover:shadow-stone-900/5 dark:border-[#1e3d2c]/80 dark:bg-[#0e2218]/90 dark:hover:border-[#52b788]/40 dark:hover:shadow-black/40">
+    <motion.div
+      initial={{ opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{
+        duration: 0.4,
+        delay: Math.min(index * 0.05, 0.3),
+        ease: "easeOut",
+      }}
+      whileHover={{ y: -5 }}
+      className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-stone-200/90 bg-white/95 p-3.5 sm:p-4 shadow-xs transition-shadow duration-300 hover:border-[#183b2b]/35 hover:shadow-xl hover:shadow-stone-900/5 dark:border-[#1e3d2c]/80 dark:bg-[#0e2218]/90 dark:hover:border-[#52b788]/40 dark:hover:shadow-black/40"
+    >
       {/* 1. Curated Book Showcase Stage */}
       <div className="relative flex w-full items-center justify-center overflow-hidden rounded-xl bg-gradient-to-b from-stone-100/90 via-stone-50/70 to-white/40 p-4 sm:p-5 dark:from-[#142d20]/70 dark:via-[#0e2218]/60 dark:to-transparent">
         {/* Category Pill floating at top left */}
@@ -101,17 +120,19 @@ export default function BookCard({ book }: { book: Book }) {
           )}
         </div>
 
-        {/* View Details Button */}
+        {/* View Details Button with whileTap */}
         <div className="mt-4 pt-1">
-          <Link
-            href={`/all-books/${book._id}`}
-            className="group/btn inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#183b2b] px-4 py-2.5 text-center text-xs sm:text-sm font-semibold text-white shadow-xs transition-all duration-200 hover:bg-[#122e22] active:scale-[0.98] dark:bg-[#86d39e] dark:text-[#07170f] dark:hover:bg-[#72bf89]"
-          >
-            <span>View Details</span>
-            <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover/btn:translate-x-1" />
-          </Link>
+          <motion.div whileTap={{ scale: 0.97 }} whileHover={{ scale: 1.01 }}>
+            <Link
+              href={`/all-books/${book._id}`}
+              className="group/btn inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#183b2b] px-4 py-2.5 text-center text-xs sm:text-sm font-semibold text-white shadow-xs transition-colors duration-200 hover:bg-[#122e22] dark:bg-[#86d39e] dark:text-[#07170f] dark:hover:bg-[#72bf89]"
+            >
+              <span>View Details</span>
+              <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover/btn:translate-x-1" />
+            </Link>
+          </motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

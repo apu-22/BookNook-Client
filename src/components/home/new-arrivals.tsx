@@ -3,6 +3,7 @@ import { connection } from "next/server";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import BookCard, { Book } from "@/components/books/bookCard";
+import { FadeIn, ScaleOnHover } from "@/components/common/animations";
 
 async function NewArrivalsList() {
   await connection();
@@ -32,8 +33,8 @@ async function NewArrivalsList() {
 
     return (
       <div className="mt-8 sm:mt-10 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-5">
-        {books.map((book) => (
-          <BookCard key={book._id} book={book} />
+        {books.map((book, index) => (
+          <BookCard key={book._id} book={book} index={index} />
         ))}
       </div>
     );
@@ -48,8 +49,6 @@ async function NewArrivalsList() {
     );
   }
 }
-
-
 
 function NewArrivalsSkeleton() {
   return (
@@ -74,31 +73,33 @@ export default function NewArrivalsBook() {
   return (
     <section className="py-12 sm:py-16 md:py-20 bg-stone-50/50 dark:bg-[#0a1e14]/50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto">
+        {/* Section Header with FadeIn */}
+        <FadeIn className="text-center max-w-2xl mx-auto">
           <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
             New Arrivals
           </h2>
           <p className="mt-2 text-sm sm:text-base text-stone-600 dark:text-stone-400">
             The latest books added by our readers.
           </p>
-        </div>
+        </FadeIn>
 
         {/* Dynamic Books Grid */}
         <Suspense fallback={<NewArrivalsSkeleton />}>
           <NewArrivalsList />
         </Suspense>
 
-        {/* See All Books Button */}
-        <div className="mt-10 sm:mt-12 flex justify-center">
-          <Link
-            href="/all-books"
-            className="inline-flex items-center gap-2 rounded-xl bg-[#183b2b] px-6 py-3 text-sm font-semibold text-white shadow-xs transition-all hover:bg-[#122e22] active:scale-[0.98] dark:bg-[#86d39e] dark:text-[#0a1e14] dark:hover:bg-[#72bf89]"
-          >
-            <span>See All Books</span>
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
+        {/* See All Books Button with Hover Scale */}
+        <FadeIn delay={0.2} className="mt-10 sm:mt-12 flex justify-center">
+          <ScaleOnHover>
+            <Link
+              href="/all-books"
+              className="inline-flex items-center gap-2 rounded-xl bg-[#183b2b] px-6 py-3 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-[#122e22] dark:bg-[#86d39e] dark:text-[#0a1e14] dark:hover:bg-[#72bf89]"
+            >
+              <span>See All Books</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </ScaleOnHover>
+        </FadeIn>
       </div>
     </section>
   );

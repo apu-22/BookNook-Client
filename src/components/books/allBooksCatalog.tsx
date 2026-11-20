@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { Search, X, BookOpen, SlidersHorizontal, RotateCcw } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import BookCard, { Book } from "./bookCard";
 
 interface AllBooksCatalogProps {
@@ -94,18 +95,20 @@ export default function AllBooksCatalog({ books }: AllBooksCatalogProps) {
           {categories.map((cat) => {
             const isSelected = selectedCategory.toLowerCase() === cat.toLowerCase();
             return (
-              <button
+              <motion.button
                 key={cat}
                 type="button"
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.96 }}
                 onClick={() => setSelectedCategory(cat)}
-                className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-all ${
+                className={`shrink-0 rounded-full px-3.5 py-1 text-xs font-medium transition-colors ${
                   isSelected
                     ? "bg-[#183b2b] text-white shadow-xs dark:bg-[#86d39e] dark:text-[#07170f] font-semibold"
                     : "border border-stone-200/90 bg-stone-50/70 text-stone-600 hover:bg-stone-100 hover:text-stone-900 dark:border-stone-800 dark:bg-[#12281d]/60 dark:text-stone-300 dark:hover:bg-[#183b2b]/30"
                 }`}
               >
                 {cat}
-              </button>
+              </motion.button>
             );
           })}
         </div>
@@ -113,7 +116,11 @@ export default function AllBooksCatalog({ books }: AllBooksCatalogProps) {
 
       {/* Book Grid or Empty State */}
       {filteredBooks.length === 0 ? (
-        <div className="my-12 rounded-2xl border border-dashed border-stone-300 p-12 text-center dark:border-stone-800 bg-white/40 dark:bg-[#0e2218]/30">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="my-12 rounded-2xl border border-dashed border-stone-300 p-12 text-center dark:border-stone-800 bg-white/40 dark:bg-[#0e2218]/30"
+        >
           <BookOpen className="mx-auto h-12 w-12 text-stone-300 dark:text-stone-600 mb-3" />
           <h3 className="font-serif text-lg font-bold text-stone-800 dark:text-stone-200">
             No matching books found
@@ -123,19 +130,21 @@ export default function AllBooksCatalog({ books }: AllBooksCatalogProps) {
               ? `No books matching "${searchQuery}" in category "${selectedCategory}".`
               : `No books currently available in "${selectedCategory}".`}
           </p>
-          <button
+          <motion.button
             type="button"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
             onClick={handleResetFilters}
             className="mt-5 inline-flex items-center gap-1.5 rounded-xl border border-stone-300 bg-white px-4 py-2 text-xs font-semibold text-stone-700 shadow-2xs hover:bg-stone-50 dark:border-stone-700 dark:bg-[#12281d] dark:text-stone-300 dark:hover:bg-[#183b2b]/50"
           >
             <RotateCcw className="h-3.5 w-3.5" />
             <span>Reset Filters</span>
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-7">
-          {filteredBooks.map((book) => (
-            <BookCard key={book._id} book={book} />
+          {filteredBooks.map((book, index) => (
+            <BookCard key={book._id} book={book} index={index} />
           ))}
         </div>
       )}
