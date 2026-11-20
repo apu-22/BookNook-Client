@@ -17,6 +17,7 @@ import {
     FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { toast } from "@/components/ui/toast";
 import { signIn } from "@/lib/auth-client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -42,17 +43,31 @@ export default function SignInPage() {
 
             if (error) {
                 console.error("Login failed:", error.message);
-                alert(error.message || "Invalid email or password");
+                toast.add({
+                    title: "Sign In Failed",
+                    description: error.message || "Invalid email or password. Please try again.",
+                    type: "error",
+                });
                 return;
             }
 
             if (userData) {
+                toast.add({
+                    title: "Welcome Back!",
+                    description: "You have signed in successfully.",
+                    type: "success",
+                });
                 router.push("/");
+                router.refresh();
             }
 
         } catch (error) {
             console.error("Sign in error:", error);
-            alert("Something went wrong. Please try again.");
+            toast.add({
+                title: "Sign In Error",
+                description: "Something went wrong. Please check your connection and try again.",
+                type: "error",
+            });
         } finally {
             setLoading(false);
         }

@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { toast } from "@/components/ui/toast";
 import { signUp } from "@/lib/auth-client";
 
 const DEFAULT_AVATAR = "https://github.com/shadcn.png";
@@ -43,7 +44,11 @@ export default function SignUpPage() {
 
         // Confirm password validation
         if (data.password !== data.confirmPassword) {
-            alert("Password does not match!");
+            toast.add({
+                title: "Passwords Do Not Match",
+                description: "Please make sure your password and confirmation password match.",
+                type: "error",
+            });
             return;
         }
 
@@ -62,16 +67,30 @@ export default function SignUpPage() {
 
             if (error) {
                 console.error("Sign up error:", error);
-                alert(error.message || "Failed to create account. Please try again.");
+                toast.add({
+                    title: "Registration Failed",
+                    description: error.message || "Failed to create account. Please try again.",
+                    type: "error",
+                });
                 return;
             }
 
             if (userData) {
+                toast.add({
+                    title: "Account Created!",
+                    description: "Welcome to BookNook! You have been registered and signed in.",
+                    type: "success",
+                });
                 router.push('/');
+                router.refresh();
             }
         } catch (err) {
             console.error("Sign up error:", err);
-            alert("Something went wrong. Please try again.");
+            toast.add({
+                title: "Registration Error",
+                description: "Something went wrong. Please check your connection and try again.",
+                type: "error",
+            });
         } finally {
             setLoading(false);
         }
