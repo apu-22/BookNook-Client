@@ -8,6 +8,7 @@ import { BookOpen, Moon, Sun, Menu, X, User as UserIcon, LogOut } from "lucide-r
 import { signOut, useSession } from "@/lib/auth-client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import { toast } from "@/components/ui/toast";
 import {
   Popover,
   PopoverContent,
@@ -42,6 +43,21 @@ export default function Navbar() {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Show welcome toast after returning from Google/Social sign in
+  useEffect(() => {
+    if (user && typeof window !== "undefined") {
+      const shouldShowToast = sessionStorage.getItem("show_welcome_toast");
+      if (shouldShowToast === "true") {
+        sessionStorage.removeItem("show_welcome_toast");
+        toast.add({
+          title: "Welcome Back!",
+          description: `You have signed in successfully${user.name ? `, ${user.name}` : ""}.`,
+          type: "success",
+        });
+      }
+    }
+  }, [user]);
 
   const toggleTheme = () => {
     setTheme(resolvedTheme === "dark" ? "light" : "dark");

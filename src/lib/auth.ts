@@ -23,4 +23,10 @@ export const auth = betterAuth({
             maxAge: 7 * 24 * 60 * 60 //7days
         }
     },
+    socialProviders: {
+        google: { 
+            clientId: process.env.GOOGLE_AUTH_CLIENT_ID as string, 
+            clientSecret: process.env.GOOGLE_AUTH_CLIENT_KEY as string, 
+        }, 
+    },
 });
